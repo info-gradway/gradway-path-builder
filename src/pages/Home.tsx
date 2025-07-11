@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Target, Calendar, CheckCircle, TrendingUp, MapPin } from "lucide-react";
+import { ArrowRight, Target, MapPin, CheckCircle, Briefcase, TrendingUp, Compass } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Home = () => {
@@ -16,19 +16,19 @@ const Home = () => {
 
   const features = [
     {
-      icon: <Target className="w-8 h-8" />,
-      title: "Career-Backed Programs",
-      description: "Built in collaboration with industry mentors to deliver exactly what employers value"
+      icon: <Briefcase className="w-8 h-8" />,
+      title: "Career-Focused",
+      description: "Built with mentors to match real job needs"
     },
     {
       icon: <TrendingUp className="w-8 h-8" />,
-      title: "Focused, Outcome-Driven Learning",
-      description: "Every module and project moves learners closer to the role they want"
+      title: "Outcome-First",
+      description: "Every module pushes you toward a real goal"
     },
     {
-      icon: <MapPin className="w-8 h-8" />,
-      title: "Clarity, Structure, and Momentum",
-      description: "Programs are built like sprints — with clear paths and steady progress"
+      icon: <Compass className="w-8 h-8" />,
+      title: "Structured & Supportive",
+      description: "Clear paths. No fluff. Visible progress"
     }
   ];
 
@@ -64,27 +64,27 @@ const Home = () => {
               <div className="w-24 h-24 bg-[#CCFF66] rounded-full flex items-center justify-center mx-auto mb-6">
                 <Target className="w-10 h-10 text-black" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-black">Choose a Program Aligned to Your Goal</h3>
+              <h3 className="text-2xl font-bold mb-4 text-black">Pick Your Program</h3>
               <p className="text-gray-600">
-                Select from curated programs designed to help you break into roles like Data Analyst, Product Associate, and more
+                Choose a role-aligned learning program (e.g., Data Analyst, Product Associate)
               </p>
             </div>
             <div className="text-center">
               <div className="w-24 h-24 bg-[#CCFF66] rounded-full flex items-center justify-center mx-auto mb-6">
-                <Calendar className="w-10 h-10 text-black" />
+                <MapPin className="w-10 h-10 text-black" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-black">Follow a Structured Learning Sprint</h3>
+              <h3 className="text-2xl font-bold mb-4 text-black">Follow the Roadmap</h3>
               <p className="text-gray-600">
-                Progress through real-world projects, guided content, and milestone check-ins — built for focus and clarity
+                Learn through real projects and guided sprints
               </p>
             </div>
             <div className="text-center">
               <div className="w-24 h-24 bg-[#CCFF66] rounded-full flex items-center justify-center mx-auto mb-6">
                 <CheckCircle className="w-10 h-10 text-black" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-black">Graduate with Skills You Can Prove</h3>
+              <h3 className="text-2xl font-bold mb-4 text-black">Prove Your Skills</h3>
               <p className="text-gray-600">
-                Complete your program with portfolio-ready outcomes and job-readiness you can back up
+                Graduate with job-ready outcomes and a portfolio
               </p>
             </div>
           </div>
