@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Target, Clock, Award, Search, Play, CheckCircle } from "lucide-react";
+import { ArrowRight, Target, Calendar, CheckCircle, TrendingUp, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Home = () => {
@@ -17,18 +17,18 @@ const Home = () => {
   const features = [
     {
       icon: <Target className="w-8 h-8" />,
-      title: "Outcome-First Learning",
-      description: "Every path is designed with clear job outcomes in mind"
+      title: "Career-Backed Programs",
+      description: "Built in collaboration with industry mentors to deliver exactly what employers value"
     },
     {
-      icon: <Clock className="w-8 h-8" />,
-      title: "Time-Flexible",
-      description: "Choose paths that fit your schedule - 5 minutes to 5 months"
+      icon: <TrendingUp className="w-8 h-8" />,
+      title: "Focused, Outcome-Driven Learning",
+      description: "Every module and project moves learners closer to the role they want"
     },
     {
-      icon: <Award className="w-8 h-8" />,
-      title: "Certifiable Content",
-      description: "Build credible skills with industry-recognized learning"
+      icon: <MapPin className="w-8 h-8" />,
+      title: "Clarity, Structure, and Momentum",
+      description: "Programs are built like sprints — with clear paths and steady progress"
     }
   ];
 
@@ -62,29 +62,29 @@ const Home = () => {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-24 h-24 bg-[#CCFF66] rounded-full flex items-center justify-center mx-auto mb-6">
-                <Search className="w-10 h-10 text-black" />
+                <Target className="w-10 h-10 text-black" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-black">Search Topic</h3>
+              <h3 className="text-2xl font-bold mb-4 text-black">Choose a Program Aligned to Your Goal</h3>
               <p className="text-gray-600">
-                Tell us what you want to learn and we'll find the perfect path for you
+                Select from curated programs designed to help you break into roles like Data Analyst, Product Associate, and more
               </p>
             </div>
             <div className="text-center">
               <div className="w-24 h-24 bg-[#CCFF66] rounded-full flex items-center justify-center mx-auto mb-6">
-                <Clock className="w-10 h-10 text-black" />
+                <Calendar className="w-10 h-10 text-black" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-black">Choose Time</h3>
+              <h3 className="text-2xl font-bold mb-4 text-black">Follow a Structured Learning Sprint</h3>
               <p className="text-gray-600">
-                Select how much time you have - from quick 5-minute lessons to comprehensive courses
+                Progress through real-world projects, guided content, and milestone check-ins — built for focus and clarity
               </p>
             </div>
             <div className="text-center">
               <div className="w-24 h-24 bg-[#CCFF66] rounded-full flex items-center justify-center mx-auto mb-6">
-                <Play className="w-10 h-10 text-black" />
+                <CheckCircle className="w-10 h-10 text-black" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-black">Start Path</h3>
+              <h3 className="text-2xl font-bold mb-4 text-black">Graduate with Skills You Can Prove</h3>
               <p className="text-gray-600">
-                Follow your personalized learning journey with clear milestones and outcomes
+                Complete your program with portfolio-ready outcomes and job-readiness you can back up
               </p>
             </div>
           </div>
