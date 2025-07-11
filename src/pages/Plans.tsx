@@ -1,73 +1,76 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Zap, Target, Crown } from "lucide-react";
+import { Check, MessageCircle, Award, Users, Video, FileText, Briefcase, Target } from "lucide-react";
 
 const Plans = () => {
   const plans = [
     {
-      name: "Free Forever",
-      price: "$0",
-      period: "forever",
-      description: "Perfect for getting started with outcome-focused learning",
+      name: "Starter",
+      price: "₹1,499",
+      period: "one-time",
+      subtitle: "Just enough to get started",
+      description: "Perfect for exploring your first program with professional support",
       icon: <Target className="w-8 h-8" />,
       popular: false,
       features: [
-        "Access to 20+ free learning paths",
-        "Basic progress tracking",
-        "Community support",
-        "5-minute daily lessons",
+        "Access to 1 program of your choice",
+        "Industry-recognized certificates",
+        "WhatsApp community support",
+        "Downloadable resources",
         "Mobile app access",
-        "Certificate of completion"
+        "Lifetime access to chosen program"
       ]
     },
     {
-      name: "Pro Learner",
-      price: "$29",
-      period: "per month",
-      description: "Accelerate your career with unlimited access and premium features",
-      icon: <Zap className="w-8 h-8" />,
+      name: "Core",
+      price: "₹2,499",
+      period: "one-time",
+      subtitle: "Everything you need to grow",
+      description: "Complete access to all programs with mentor guidance",
+      icon: <Award className="w-8 h-8" />,
       popular: true,
       features: [
-        "Unlimited access to all paths",
-        "Personalized learning recommendations",
-        "1-on-1 mentor sessions (2 per month)",
-        "Advanced progress analytics",
-        "Priority community support",
+        "Access to all 4 programs",
+        "1-on-1 mentor support sessions",
         "Industry-recognized certificates",
-        "Offline course downloads",
-        "Job placement assistance"
+        "WhatsApp community support",
+        "Priority support response",
+        "Advanced progress tracking",
+        "Downloadable resources",
+        "Mobile app access"
       ]
     },
     {
-      name: "Enterprise",
-      price: "Custom",
-      period: "per team",
-      description: "Scale learning across your organization with advanced tools",
-      icon: <Crown className="w-8 h-8" />,
+      name: "Accelerate",
+      price: "₹2,999",
+      period: "one-time",
+      subtitle: "Launch your career with full support",
+      description: "Everything in Core plus career acceleration tools and services",
+      icon: <Briefcase className="w-8 h-8" />,
       popular: false,
       features: [
-        "Everything in Pro Learner",
-        "Team management dashboard",
-        "Custom learning paths",
-        "Advanced analytics & reporting",
-        "Dedicated customer success manager",
-        "SSO integration",
-        "API access",
-        "White-label options"
+        "Everything in Core plan",
+        "Live mentorship sessions",
+        "LinkedIn optimization bootcamp",
+        "Professional CV/resume support",
+        "Internship application toolkit",
+        "Mock interview practice sessions",
+        "Job placement assistance",
+        "Career guidance consultations"
       ]
     }
   ];
 
   const comparisonFeatures = [
-    { feature: "Learning Paths", free: "20+", pro: "Unlimited", enterprise: "Custom" },
-    { feature: "Progress Tracking", free: "Basic", pro: "Advanced", enterprise: "Enterprise" },
-    { feature: "Mentor Sessions", free: "0", pro: "2/month", enterprise: "Unlimited" },
-    { feature: "Certificates", free: "Basic", pro: "Industry-recognized", enterprise: "Custom branded" },
-    { feature: "Support", free: "Community", pro: "Priority", enterprise: "Dedicated manager" },
-    { feature: "Mobile App", free: "✓", pro: "✓", enterprise: "✓" },
-    { feature: "Offline Access", free: "✗", pro: "✓", enterprise: "✓" },
-    { feature: "Job Placement", free: "✗", pro: "✓", enterprise: "✓" }
+    { feature: "Program Access", starter: "1 Program", core: "All 4 Programs", accelerate: "All 4 Programs" },
+    { feature: "Certificates", starter: "✓", core: "✓", accelerate: "✓" },
+    { feature: "Community Support", starter: "WhatsApp", core: "WhatsApp + Priority", accelerate: "WhatsApp + Priority" },
+    { feature: "Mentor Sessions", starter: "✗", core: "1-on-1 Support", accelerate: "Live + 1-on-1" },
+    { feature: "Career Services", starter: "✗", core: "✗", accelerate: "Full Package" },
+    { feature: "LinkedIn Bootcamp", starter: "✗", core: "✗", accelerate: "✓" },
+    { feature: "Interview Practice", starter: "✗", core: "✗", accelerate: "✓" },
+    { feature: "Job Placement", starter: "✗", core: "✗", accelerate: "✓" }
   ];
 
   return (
@@ -79,7 +82,7 @@ const Plans = () => {
             Choose Your Learning Journey
           </h1>
           <p className="text-xl text-black/70">
-            Start free forever, upgrade when you're ready to accelerate your career
+            Invest in your future with programs designed to get you job-ready
           </p>
         </div>
       </section>
@@ -112,11 +115,10 @@ const Plans = () => {
                     {plan.icon}
                   </div>
                   <CardTitle className="text-2xl font-bold text-black">{plan.name}</CardTitle>
+                  <p className="text-sm text-gray-500 mb-2">{plan.subtitle}</p>
                   <div className="mt-2">
                     <span className="text-4xl font-bold text-black">{plan.price}</span>
-                    {plan.period !== "forever" && (
-                      <span className="text-gray-500 ml-2">{plan.period}</span>
-                    )}
+                    <span className="text-gray-500 ml-2">{plan.period}</span>
                   </div>
                   <p className="text-gray-600 mt-2">{plan.description}</p>
                 </CardHeader>
@@ -124,9 +126,9 @@ const Plans = () => {
                 <CardContent>
                   <ul className="space-y-3 mb-6">
                     {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-center">
-                        <Check className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
-                        <span className="text-gray-700">{feature}</span>
+                      <li key={featureIndex} className="flex items-start">
+                        <Check className="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700 text-sm">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -139,7 +141,7 @@ const Plans = () => {
                     }`}
                     variant={plan.popular ? "default" : "outline"}
                   >
-                    {plan.name === "Enterprise" ? "Contact Sales" : "Get Started"}
+                    Get Started
                   </Button>
                 </CardContent>
               </Card>
@@ -158,17 +160,17 @@ const Plans = () => {
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
             <div className="grid grid-cols-4 bg-gray-50 border-b">
               <div className="p-4 font-medium text-black">Features</div>
-              <div className="p-4 text-center font-medium text-black">Free</div>
-              <div className="p-4 text-center font-medium text-black bg-black text-white">Pro</div>
-              <div className="p-4 text-center font-medium text-black">Enterprise</div>
+              <div className="p-4 text-center font-medium text-black">Starter</div>
+              <div className="p-4 text-center font-medium text-black bg-black text-white">Core</div>
+              <div className="p-4 text-center font-medium text-black">Accelerate</div>
             </div>
             
             {comparisonFeatures.map((row, index) => (
               <div key={index} className={`grid grid-cols-4 border-b ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
                 <div className="p-4 font-medium text-gray-900">{row.feature}</div>
-                <div className="p-4 text-center text-gray-600">{row.free}</div>
-                <div className="p-4 text-center text-gray-900 font-medium">{row.pro}</div>
-                <div className="p-4 text-center text-gray-600">{row.enterprise}</div>
+                <div className="p-4 text-center text-gray-600">{row.starter}</div>
+                <div className="p-4 text-center text-gray-900 font-medium">{row.core}</div>
+                <div className="p-4 text-center text-gray-600">{row.accelerate}</div>
               </div>
             ))}
           </div>
@@ -184,34 +186,34 @@ const Plans = () => {
           
           <div className="space-y-6">
             <div className="border-b pb-6">
-              <h3 className="text-xl font-bold mb-2 text-black">Is the free plan really free forever?</h3>
+              <h3 className="text-xl font-bold mb-2 text-black">What's included in the programs?</h3>
               <p className="text-gray-600">
-                Yes! Our free plan gives you access to 20+ curated learning paths with no time limits. 
-                You can learn at your own pace without any hidden costs.
+                Each program includes structured learning modules, real-world projects, industry-recognized 
+                certificates, and access to our supportive community.
               </p>
             </div>
             
             <div className="border-b pb-6">
-              <h3 className="text-xl font-bold mb-2 text-black">What makes Gradway different from other platforms?</h3>
+              <h3 className="text-xl font-bold mb-2 text-black">How does mentor support work?</h3>
               <p className="text-gray-600">
-                We focus on outcome-first learning with clear job outcomes for every path. Our content is 
-                curated for real-world application, not just theoretical knowledge.
+                Core and Accelerate plans include 1-on-1 mentor sessions where you can get personalized 
+                guidance, career advice, and technical support from industry experts.
               </p>
             </div>
             
             <div className="border-b pb-6">
-              <h3 className="text-xl font-bold mb-2 text-black">Can I switch plans anytime?</h3>
+              <h3 className="text-xl font-bold mb-2 text-black">Can I upgrade my plan later?</h3>
               <p className="text-gray-600">
-                Absolutely! You can upgrade or downgrade your plan at any time. Changes take effect 
-                immediately, and we'll prorate any payments.
+                Yes! You can upgrade from Starter to Core or Accelerate at any time. We'll credit your 
+                previous payment toward the new plan.
               </p>
             </div>
             
             <div>
-              <h3 className="text-xl font-bold mb-2 text-black">Do you offer refunds?</h3>
+              <h3 className="text-xl font-bold mb-2 text-black">Do you offer job placement guarantees?</h3>
               <p className="text-gray-600">
-                We offer a 30-day money-back guarantee on all paid plans. If you're not satisfied, 
-                we'll refund your payment, no questions asked.
+                Our Accelerate plan includes job placement assistance, interview practice, and career 
+                guidance. While we can't guarantee placement, we provide comprehensive support to maximize your success.
               </p>
             </div>
           </div>

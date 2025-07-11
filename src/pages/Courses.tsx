@@ -1,10 +1,10 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search, Filter, Clock, Users, Star } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Courses = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -21,7 +21,8 @@ const Courses = () => {
       level: "Beginner",
       rating: 4.8,
       students: 1250,
-      tags: ["Python", "Data Analysis", "Pandas"]
+      tags: ["Python", "Data Analysis", "Pandas"],
+      link: "/course/python"
     },
     {
       title: "React Development Mastery",
@@ -31,7 +32,8 @@ const Courses = () => {
       level: "Intermediate",
       rating: 4.9,
       students: 980,
-      tags: ["React", "JavaScript", "Frontend"]
+      tags: ["React", "JavaScript", "Frontend"],
+      link: "/courses"
     },
     {
       title: "Machine Learning Foundations",
@@ -41,7 +43,8 @@ const Courses = () => {
       level: "Beginner",
       rating: 4.7,
       students: 750,
-      tags: ["Machine Learning", "Python", "Statistics"]
+      tags: ["Machine Learning", "Python", "Statistics"],
+      link: "/course/machine-learning"
     },
     {
       title: "Digital Marketing Strategy",
@@ -51,27 +54,30 @@ const Courses = () => {
       level: "Beginner",
       rating: 4.6,
       students: 1100,
-      tags: ["Marketing", "Strategy", "Analytics"]
+      tags: ["Marketing", "Strategy", "Analytics"],
+      link: "/courses"
     },
     {
-      title: "SQL Database Management",
+      title: "Data Science Fundamentals",
       category: "Data Science",
       duration: { short: "5 mins", medium: "4 hrs", long: "10 days" },
       outcome: "Query databases confidently for analyst positions",
       level: "Beginner",
       rating: 4.8,
       students: 890,
-      tags: ["SQL", "Database", "Data Analysis"]
+      tags: ["Data Science", "Statistics", "Analysis"],
+      link: "/course/data-science"
     },
     {
-      title: "UX/UI Design Principles",
+      title: "Excel Mastery",
       category: "Design",
       duration: { short: "12 mins", medium: "7 hrs", long: "3 weeks" },
-      outcome: "Design user-centered interfaces for design roles",
+      outcome: "Master advanced Excel for business analysis",
       level: "Intermediate",
       rating: 4.5,
       students: 650,
-      tags: ["UX", "UI", "Design Thinking"]
+      tags: ["Excel", "Analysis", "Business"],
+      link: "/course/excel"
     }
   ];
 
@@ -140,55 +146,57 @@ const Courses = () => {
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredCourses.map((course, index) => (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <Badge variant="secondary" className="bg-[#CCFF66] text-black">
-                      {course.category}
-                    </Badge>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <Star className="w-4 h-4 text-yellow-400 mr-1" />
-                      {course.rating}
+              <Link key={index} to={course.link}>
+                <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1 cursor-pointer">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <Badge variant="secondary" className="bg-[#CCFF66] text-black">
+                        {course.category}
+                      </Badge>
+                      <div className="flex items-center text-sm text-gray-500">
+                        <Star className="w-4 h-4 text-yellow-400 mr-1" />
+                        {course.rating}
+                      </div>
                     </div>
-                  </div>
-                  
-                  <h3 className="text-xl font-bold mb-2 text-black">{course.title}</h3>
-                  <p className="text-gray-600 mb-4 text-sm">{course.outcome}</p>
-                  
-                  {/* Duration Options */}
-                  <div className="mb-4">
-                    <p className="text-sm font-medium text-gray-700 mb-2">Choose your time:</p>
-                    <div className="flex gap-2 text-xs">
-                      <span className="px-2 py-1 bg-gray-100 rounded">{course.duration.short}</span>
-                      <span className="px-2 py-1 bg-gray-100 rounded">{course.duration.medium}</span>
-                      <span className="px-2 py-1 bg-gray-100 rounded">{course.duration.long}</span>
+                    
+                    <h3 className="text-xl font-bold mb-2 text-black">{course.title}</h3>
+                    <p className="text-gray-600 mb-4 text-sm">{course.outcome}</p>
+                    
+                    {/* Duration Options */}
+                    <div className="mb-4">
+                      <p className="text-sm font-medium text-gray-700 mb-2">Choose your time:</p>
+                      <div className="flex gap-2 text-xs">
+                        <span className="px-2 py-1 bg-gray-100 rounded">{course.duration.short}</span>
+                        <span className="px-2 py-1 bg-gray-100 rounded">{course.duration.medium}</span>
+                        <span className="px-2 py-1 bg-gray-100 rounded">{course.duration.long}</span>
+                      </div>
                     </div>
-                  </div>
-                  
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    {course.tags.map((tag, tagIndex) => (
-                      <span key={tagIndex} className="text-xs px-2 py-1 bg-gray-50 text-gray-600 rounded">
-                        {tag}
+                    
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-1 mb-4">
+                      {course.tags.map((tag, tagIndex) => (
+                        <span key={tagIndex} className="text-xs px-2 py-1 bg-gray-50 text-gray-600 rounded">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    
+                    <div className="flex items-center justify-between mb-4 text-sm text-gray-500">
+                      <div className="flex items-center">
+                        <Users className="w-4 h-4 mr-1" />
+                        {course.students} students
+                      </div>
+                      <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded text-xs">
+                        {course.level}
                       </span>
-                    ))}
-                  </div>
-                  
-                  <div className="flex items-center justify-between mb-4 text-sm text-gray-500">
-                    <div className="flex items-center">
-                      <Users className="w-4 h-4 mr-1" />
-                      {course.students} students
                     </div>
-                    <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded text-xs">
-                      {course.level}
-                    </span>
-                  </div>
-                  
-                  <Button className="w-full bg-black text-white hover:bg-black/90">
-                    Start Learning
-                  </Button>
-                </CardContent>
-              </Card>
+                    
+                    <Button className="w-full bg-black text-white hover:bg-black/90">
+                      Start Learning
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
           

@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,6 +10,10 @@ import Plans from "./pages/Plans";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import PythonCourse from "./pages/PythonCourse";
+import DataScienceCourse from "./pages/DataScienceCourse";
+import MachineLearningCourse from "./pages/MachineLearningCourse";
+import ExcelCourse from "./pages/ExcelCourse";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +27,10 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/courses" element={<Courses />} />
+            <Route path="/course/python" element={<PythonCourse />} />
+            <Route path="/course/data-science" element={<DataScienceCourse />} />
+            <Route path="/course/machine-learning" element={<MachineLearningCourse />} />
+            <Route path="/course/excel" element={<ExcelCourse />} />
             <Route path="/plans" element={<Plans />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
