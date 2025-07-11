@@ -1,17 +1,39 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Target, MapPin, CheckCircle, Briefcase, TrendingUp, Compass } from "lucide-react";
+import { ArrowRight, Target, MapPin, CheckCircle, Briefcase, TrendingUp, Compass, Code, BarChart3, Brain, Table } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Home = () => {
-  const learningPaths = [
-    { title: "Python Fundamentals", duration: "5 hrs", category: "Programming", level: "Beginner" },
-    { title: "Excel Data Analysis", duration: "3 hrs", category: "Data", level: "Intermediate" },
-    { title: "Machine Learning Basics", duration: "8 hrs", category: "AI/ML", level: "Beginner" },
-    { title: "React Development", duration: "12 hrs", category: "Web Dev", level: "Intermediate" },
-    { title: "Digital Marketing", duration: "6 hrs", category: "Marketing", level: "Beginner" },
-    { title: "SQL for Beginners", duration: "4 hrs", category: "Database", level: "Beginner" }
+  const learningPrograms = [
+    {
+      title: "Python for Data Science",
+      tagline: "Master Python from basics to job-ready data analysis",
+      icon: <Code className="w-8 h-8" />,
+      link: "/course/python",
+      category: "Programming"
+    },
+    {
+      title: "Data Science Fundamentals",
+      tagline: "Learn statistical analysis and data visualization",
+      icon: <BarChart3 className="w-8 h-8" />,
+      link: "/course/data-science",
+      category: "Data Science"
+    },
+    {
+      title: "Machine Learning Foundations",
+      tagline: "Build intelligent systems and predictive models",
+      icon: <Brain className="w-8 h-8" />,
+      link: "/course/machine-learning",
+      category: "AI/ML"
+    },
+    {
+      title: "Excel Mastery",
+      tagline: "Master advanced Excel for business analysis",
+      icon: <Table className="w-8 h-8" />,
+      link: "/course/excel",
+      category: "Business"
+    }
   ];
 
   const features = [
@@ -91,35 +113,40 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Popular Learning Paths */}
+      {/* Learning Programs */}
       <section className="py-20 px-4 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-black">
-            Popular Learning Paths
+            Our Programs
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {learningPaths.map((path, index) => (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="px-3 py-1 bg-[#CCFF66] text-black text-sm font-medium rounded-full">
-                      {path.category}
-                    </span>
-                    <span className="text-sm text-gray-500">{path.duration}</span>
-                  </div>
-                  <h3 className="text-xl font-bold mb-2 text-black">{path.title}</h3>
-                  <p className="text-gray-600 mb-4">Level: {path.level}</p>
-                  <Button variant="outline" className="w-full border-black text-black hover:bg-black hover:text-white">
-                    Start Learning
-                  </Button>
-                </CardContent>
-              </Card>
+          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
+            {learningPrograms.map((program, index) => (
+              <Link key={index} to={program.link}>
+                <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white hover:-translate-y-1 cursor-pointer h-full">
+                  <CardContent className="p-8 text-center">
+                    <div className="w-16 h-16 bg-[#CCFF66] rounded-full flex items-center justify-center mx-auto mb-6">
+                      {program.icon}
+                    </div>
+                    <div className="mb-4">
+                      <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm font-medium rounded-full">
+                        {program.category}
+                      </span>
+                    </div>
+                    <h3 className="text-2xl font-bold mb-3 text-black">{program.title}</h3>
+                    <p className="text-gray-600 mb-6">{program.tagline}</p>
+                    <Button className="w-full bg-black text-white hover:bg-black/90">
+                      Learn More
+                      <ArrowRight className="ml-2 w-4 h-4" />
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
           <div className="text-center mt-12">
             <Link to="/courses">
               <Button variant="outline" size="lg" className="border-black text-black hover:bg-black hover:text-white px-8 py-4">
-                View All Courses
+                View All Programs
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
