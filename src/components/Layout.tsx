@@ -25,11 +25,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link to="/" className="flex items-center">
+            <Link to="/" className="flex items-center group">
               <img 
-                src="/lovable-uploads/25a1066f-5ede-46fa-b486-fb4f2a00163c.png" 
+                src="/lovable-uploads/c3998bda-243d-44b3-8d80-f989893fe35d.png" 
                 alt="Gradway" 
-                className="h-8 w-auto"
+                className="h-8 w-auto transition-all duration-200 group-hover:scale-105 group-hover:brightness-110"
               />
             </Link>
 
@@ -112,9 +112,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             {/* Logo and Description */}
             <div className="md:col-span-2">
               <img 
-                src="/lovable-uploads/25a1066f-5ede-46fa-b486-fb4f2a00163c.png" 
+                src="/lovable-uploads/da2982f5-7a0f-4438-bc5b-8dbef992233b.png" 
                 alt="Gradway" 
-                className="h-8 w-auto mb-4 brightness-0 invert"
+                className="h-8 w-auto mb-4"
               />
               <p className="text-gray-300 mb-4 max-w-md">
                 Outcome-driven learning platform helping you go from "What should I learn?" 
