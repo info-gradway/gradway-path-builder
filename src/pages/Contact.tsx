@@ -24,6 +24,7 @@ const Contact = () => {
     
     fetch(scriptURL, {
       method: 'POST',
+      mode: 'no-cors',
       body: JSON.stringify(formData),
       headers: {
         'Content-Type': 'application/json'
