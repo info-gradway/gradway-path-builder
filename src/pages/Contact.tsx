@@ -14,6 +14,7 @@ const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone: "",
     message: ""
   });
 
@@ -35,7 +36,7 @@ const Contact = () => {
         title: "Thanks! Your message was sent.",
         description: "We'll get back to you soon.",
       });
-      setFormData({ name: "", email: "", message: "" });
+      setFormData({ name: "", email: "", phone: "", message: "" });
     })
     .catch(() => {
       toast({
@@ -170,6 +171,20 @@ const Contact = () => {
                       placeholder="Your Email"
                       value={formData.email}
                       onChange={(e) => handleInputChange("email", e.target.value)}
+                      required
+                      className="mt-1"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="phone" className="text-black font-medium">Phone Number *</Label>
+                    <Input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      placeholder="Your Phone Number"
+                      value={formData.phone}
+                      onChange={(e) => handleInputChange("phone", e.target.value)}
                       required
                       className="mt-1"
                     />
