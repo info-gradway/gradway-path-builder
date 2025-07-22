@@ -20,7 +20,7 @@ const Contact = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbz_4esqwjhWpe3z6erdp-eqaI0-1oGTfr7PoiufL3gkNsrqyFCeMte1XjpzCmEuOZOA/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwl7ijwbADgl8-fsGKc-8-t6TmfUYVkbhuKZP20T2JdxwGRmdpPWL-wIq67VEkPe39F/exec';
     
     fetch(scriptURL, {
       method: 'POST',
