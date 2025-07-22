@@ -14,18 +14,35 @@ const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    subject: "",
-    message: "",
-    inquiryType: ""
+    message: ""
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Message sent successfully!",
-      description: "We'll get back to you within 24 hours.",
+    
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbz_4esqwjhWpe3z6erdp-eqaI0-1oGTfr7PoiufL3gkNsrqyFCeMte1XjpzCmEuOZOA/exec';
+    
+    fetch(scriptURL, {
+      method: 'POST',
+      body: JSON.stringify(formData),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(() => {
+      toast({
+        title: "Thanks! Your message was sent.",
+        description: "We'll get back to you soon.",
+      });
+      setFormData({ name: "", email: "", message: "" });
+    })
+    .catch(() => {
+      toast({
+        title: "Oops! Something went wrong.",
+        description: "Please try again later.",
+        variant: "destructive"
+      });
     });
-    setFormData({ name: "", email: "", subject: "", message: "", inquiryType: "" });
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -130,73 +147,49 @@ const Contact = () => {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="name" className="text-black font-medium">Name *</Label>
-                      <Input
-                        id="name"
-                        value={formData.name}
-                        onChange={(e) => handleInputChange("name", e.target.value)}
-                        required
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="email" className="text-black font-medium">Email *</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => handleInputChange("email", e.target.value)}
-                        required
-                        className="mt-1"
-                      />
-                    </div>
-                  </div>
-                  
                   <div>
-                    <Label htmlFor="inquiryType" className="text-black font-medium">Inquiry Type</Label>
-                    <Select value={formData.inquiryType} onValueChange={(value) => handleInputChange("inquiryType", value)}>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue placeholder="Select inquiry type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="general">General Support</SelectItem>
-                        <SelectItem value="partnership">Partnership</SelectItem>
-                        <SelectItem value="enterprise">Enterprise</SelectItem>
-                        <SelectItem value="press">Media & Press</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="subject" className="text-black font-medium">Subject *</Label>
+                    <Label htmlFor="name" className="text-black font-medium">Your Name *</Label>
                     <Input
-                      id="subject"
-                      value={formData.subject}
-                      onChange={(e) => handleInputChange("subject", e.target.value)}
+                      id="name"
+                      name="name"
+                      placeholder="Your Name"
+                      value={formData.name}
+                      onChange={(e) => handleInputChange("name", e.target.value)}
                       required
                       className="mt-1"
                     />
                   </div>
                   
                   <div>
-                    <Label htmlFor="message" className="text-black font-medium">Message *</Label>
+                    <Label htmlFor="email" className="text-black font-medium">Your Email *</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="Your Email"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange("email", e.target.value)}
+                      required
+                      className="mt-1"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="message" className="text-black font-medium">Your Message *</Label>
                     <Textarea
                       id="message"
+                      name="message"
                       rows={6}
+                      placeholder="Your Message"
                       value={formData.message}
                       onChange={(e) => handleInputChange("message", e.target.value)}
                       required
                       className="mt-1"
-                      placeholder="Tell us how we can help you..."
                     />
                   </div>
                   
                   <Button type="submit" className="w-full bg-black text-white hover:bg-black/90">
-                    <Send className="w-4 h-4 mr-2" />
-                    Send Message
+                    Send
                   </Button>
                 </form>
               </CardContent>
