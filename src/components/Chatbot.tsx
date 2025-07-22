@@ -1,9 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Phone, Calendar, MessageSquare } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent } from '@/components/ui/card';
+import { MessageCircle, Send, X, Phone, Mail, Calendar } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface Message {
   id: string;
@@ -18,38 +19,52 @@ interface Message {
 interface LeadData {
   name: string;
   email: string;
-  phone: string;
-  interest: string;
 }
 
-const Chatbot = () => {
+export const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
-  const [leadData, setLeadData] = useState<LeadData>({ name: '', email: '', phone: '', interest: '' });
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
-  // Load messages from localStorage on component mount
+  // Load messages from localStorage
   useEffect(() => {
-    const savedMessages = localStorage.getItem('gradbot-messages');
-    if (savedMessages && isOpen) {
-      try {
-        const parsed = JSON.parse(savedMessages);
-        setMessages(parsed.map((msg: any) => ({ ...msg, timestamp: new Date(msg.timestamp) })));
-      } catch (error) {
-        console.error('Error loading saved messages:', error);
-      }
+    const savedMessages = localStorage.getItem('chatMessages');
+    if (savedMessages) {
+      setMessages(JSON.parse(savedMessages));
     }
-  }, [isOpen]);
+  }, []);
 
-  // Save messages to localStorage whenever messages change
+  // Save messages to localStorage
   useEffect(() => {
     if (messages.length > 0) {
-      localStorage.setItem('gradbot-messages', JSON.stringify(messages));
+      localStorage.setItem('chatMessages', JSON.stringify(messages));
     }
   }, [messages]);
+
+  // Initialize chat when opened
+  useEffect(() => {
+    if (isOpen && messages.length === 0) {
+      setTimeout(() => {
+        const welcomeMessage: Message = {
+          id: Date.now().toString(),
+          text: "👋 Hi there! I'm here to help you explore our courses and career support. What interests you most?",
+          isUser: false,
+          timestamp: new Date(),
+          type: 'buttons',
+          buttons: [
+            { text: "🎓 Explore Courses", action: "explore_courses" },
+            { text: "💼 Career Support", action: "career_support" },
+            { text: "👨‍💻 Talk to a Human", action: "talk_to_human" }
+          ]
+        };
+        setMessages([welcomeMessage]);
+      }, 500);
+    }
+  }, [isOpen, messages.length]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -59,186 +74,236 @@ const Chatbot = () => {
     scrollToBottom();
   }, [messages]);
 
-  useEffect(() => {
-    if (isOpen && messages.length === 0) {
-      // Add welcome message and quick options
-      const welcomeMessage: Message = {
-        id: 'welcome',
-        text: "Hi there! 👋 I'm GradBot — Ask me anything about our courses or how we can help you unlock your future!",
-        isUser: false,
-        timestamp: new Date(),
-        type: 'text'
-      };
-      
-      const quickOptions: Message = {
-        id: 'quick-options',
-        text: "🎓 What brings you here today?",
-        isUser: false,
-        timestamp: new Date(),
-        type: 'buttons',
-        buttons: [
-          { text: '📚 Explore Courses', action: 'courses' },
-          { text: '🎯 Get Mentorship', action: 'mentorship' },
-          { text: '💼 Find Jobs', action: 'jobs' }
-        ]
-      };
-      
-      setMessages([welcomeMessage, quickOptions]);
-    }
-  }, [isOpen, messages.length]);
+  const addMessage = (message: Omit<Message, 'id' | 'timestamp'>) => {
+    const newMessage: Message = {
+      ...message,
+      id: Date.now().toString(),
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, newMessage]);
+  };
+
+  const simulateTyping = (callback: () => void, delay = 1000) => {
+    setIsTyping(true);
+    setTimeout(() => {
+      setIsTyping(false);
+      callback();
+    }, delay);
+  };
 
   const handleButtonClick = (action: string) => {
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: action === 'courses' ? 'Explore Courses' : action === 'mentorship' ? 'Get Mentorship' : 'Find Jobs',
-      isUser: true,
-      timestamp: new Date()
+    // Add user selection as message
+    const actionTexts: { [key: string]: string } = {
+      explore_courses: "🎓 Explore Courses",
+      career_support: "💼 Career Support", 
+      talk_to_human: "👨‍💻 Talk to a Human",
+      python_course: "🐍 Python Course",
+      data_science: "📊 Data Science",
+      excel_course: "📈 Excel Course",
+      machine_learning: "🤖 Machine Learning",
+      mentorship: "👨‍🏫 Mentorship",
+      cv_review: "📄 CV Review",
+      mock_interviews: "🗣️ Mock Interviews",
+      more_help: "Need More Help"
     };
 
-    setMessages(prev => [...prev, userMessage]);
-    setIsTyping(true);
-
-    setTimeout(() => {
-      let response = '';
-      let followUpButtons: Array<{ text: string; action: string }> = [];
-
-      switch (action) {
-        case 'courses':
-          response = "Great choice! 🚀 We offer 4 comprehensive courses: Python Programming, Data Science, Machine Learning, and Excel Mastery. What interests you most?";
-          followUpButtons = [
-            { text: 'Python Programming', action: 'python' },
-            { text: 'Data Science', action: 'data-science' },
-            { text: 'Machine Learning', action: 'ml' },
-            { text: 'Excel Mastery', action: 'excel' }
-          ];
-          break;
-        case 'mentorship':
-          response = "Perfect! 💡 Our mentorship programs provide personalized guidance for your career growth. What area do you need support with?";
-          followUpButtons = [
-            { text: 'Career Guidance', action: 'career-guidance' },
-            { text: 'Resume Building', action: 'resume' },
-            { text: 'Interview Prep', action: 'interview' },
-            { text: 'Skill Development', action: 'skills' }
-          ];
-          break;
-        case 'jobs':
-          response = "Excellent! 💼 We help connect our students with job opportunities. What's your current experience level?";
-          followUpButtons = [
-            { text: 'Fresh Graduate', action: 'fresh' },
-            { text: '1-3 Years Experience', action: 'junior' },
-            { text: '3+ Years Experience', action: 'senior' },
-            { text: 'Career Change', action: 'change' }
-          ];
-          break;
-        default:
-          response = "I'd love to help you get started! Let me collect some details so our team can provide personalized assistance.";
-          setShowLeadForm(true);
-      }
-
-      const botResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        text: response,
-        isUser: false,
-        timestamp: new Date(),
-        type: followUpButtons.length > 0 ? 'buttons' : 'text',
-        buttons: followUpButtons
-      };
-
-      setMessages(prev => [...prev, botResponse]);
-
-      // Show lead form for specific actions
-      if (['python', 'data-science', 'ml', 'excel', 'career-guidance', 'resume', 'interview', 'skills', 'fresh', 'junior', 'senior', 'change'].includes(action)) {
-        setTimeout(() => {
-          const leadFormMessage: Message = {
-            id: (Date.now() + 2).toString(),
-            text: "I'd love to connect you with our team! Please share your details:",
-            isUser: false,
-            timestamp: new Date(),
-            type: 'form'
-          };
-          setMessages(prev => [...prev, leadFormMessage]);
-        }, 1000);
-      }
-
-      setIsTyping(false);
-    }, 1000);
-  };
-
-  const handleLeadSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!leadData.name || !leadData.email || !leadData.interest) {
-      return;
+    if (actionTexts[action]) {
+      addMessage({
+        text: actionTexts[action],
+        isUser: true,
+        type: 'text'
+      });
     }
 
-    // Here you can send data to webhook, Google Sheets, or database
-    console.log('Lead data:', leadData);
-
-    const confirmationMessage: Message = {
-      id: Date.now().toString(),
-      text: "✅ Thanks! Our team will contact you within 24 hours. In the meantime, feel free to explore our courses!",
-      isUser: false,
-      timestamp: new Date(),
-      type: 'contact'
-    };
-
-    setMessages(prev => [...prev, confirmationMessage]);
-    setShowLeadForm(false);
-    setLeadData({ name: '', email: '', phone: '', interest: '' });
+    // Generate bot response based on action
+    simulateTyping(() => {
+      getBotResponse(action);
+    });
   };
 
-  const handleSendMessage = async () => {
+  const getBotResponse = (action: string) => {
+    switch (action) {
+      case 'explore_courses':
+        addMessage({
+          text: "Great choice! 🚀 We offer comprehensive courses in these tech areas. Which one catches your interest?",
+          isUser: false,
+          type: 'buttons',
+          buttons: [
+            { text: "🐍 Python Course", action: "python_course" },
+            { text: "📊 Data Science", action: "data_science" },
+            { text: "📈 Excel Course", action: "excel_course" },
+            { text: "🤖 Machine Learning", action: "machine_learning" }
+          ]
+        });
+        break;
+
+      case 'python_course':
+        addMessage({
+          text: "🐍 Excellent! Our Python course covers everything from basics to advanced programming, including web development with Django/Flask, automation, and data analysis. Perfect for beginners and those looking to advance their skills!\n\n💰 Course fee: ₹15,000\n⏱️ Duration: 8 weeks\n📚 Includes: Live sessions, projects, and career support",
+          isUser: false,
+          type: 'buttons',
+          buttons: [
+            { text: "👨‍💻 Talk to a Human", action: "talk_to_human" },
+            { text: "🔙 Back to Courses", action: "explore_courses" }
+          ]
+        });
+        break;
+
+      case 'data_science':
+        addMessage({
+          text: "📊 Fantastic choice! Our Data Science course includes Python, statistics, machine learning, data visualization, and real-world projects. You'll learn to analyze data and build predictive models!\n\n💰 Course fee: ₹25,000\n⏱️ Duration: 12 weeks\n📚 Includes: Python, SQL, Tableau, ML algorithms, and portfolio projects",
+          isUser: false,
+          type: 'buttons',
+          buttons: [
+            { text: "👨‍💻 Talk to a Human", action: "talk_to_human" },
+            { text: "🔙 Back to Courses", action: "explore_courses" }
+          ]
+        });
+        break;
+
+      case 'excel_course':
+        addMessage({
+          text: "📈 Smart pick! Our Excel course covers advanced formulas, pivot tables, data analysis, automation with VBA, and dashboard creation. Essential for any professional!\n\n💰 Course fee: ₹8,000\n⏱️ Duration: 4 weeks\n📚 Includes: Basic to advanced Excel, automation, and real business scenarios",
+          isUser: false,
+          type: 'buttons',
+          buttons: [
+            { text: "👨‍💻 Talk to a Human", action: "talk_to_human" },
+            { text: "🔙 Back to Courses", action: "explore_courses" }
+          ]
+        });
+        break;
+
+      case 'machine_learning':
+        addMessage({
+          text: "🤖 Amazing! Our Machine Learning course dives deep into algorithms, neural networks, deep learning, and AI applications. You'll build real ML models!\n\n💰 Course fee: ₹30,000\n⏱️ Duration: 16 weeks\n📚 Includes: Python, TensorFlow, scikit-learn, and industry projects",
+          isUser: false,
+          type: 'buttons',
+          buttons: [
+            { text: "👨‍💻 Talk to a Human", action: "talk_to_human" },
+            { text: "🔙 Back to Courses", action: "explore_courses" }
+          ]
+        });
+        break;
+
+      case 'career_support':
+        addMessage({
+          text: "💼 Wonderful! We provide comprehensive career support to help you land your dream job. What specific help do you need?",
+          isUser: false,
+          type: 'buttons',
+          buttons: [
+            { text: "👨‍🏫 Mentorship", action: "mentorship" },
+            { text: "📄 CV Review", action: "cv_review" },
+            { text: "🗣️ Mock Interviews", action: "mock_interviews" },
+            { text: "Need More Help", action: "more_help" }
+          ]
+        });
+        break;
+
+      case 'mentorship':
+        addMessage({
+          text: "👨‍🏫 Our mentorship program pairs you with industry experts who guide you through your career journey, help with technical skills, and provide insider tips for job hunting. Sessions are 1-on-1 and tailored to your goals!",
+          isUser: false,
+          type: 'buttons',
+          buttons: [
+            { text: "👨‍💻 Talk to a Human", action: "talk_to_human" },
+            { text: "🔙 Back to Career Support", action: "career_support" }
+          ]
+        });
+        break;
+
+      case 'cv_review':
+        addMessage({
+          text: "📄 Our CV review service includes detailed feedback on content, formatting, ATS optimization, and industry-specific improvements. We'll help your resume stand out to recruiters!",
+          isUser: false,
+          type: 'buttons',
+          buttons: [
+            { text: "👨‍💻 Talk to a Human", action: "talk_to_human" },
+            { text: "🔙 Back to Career Support", action: "career_support" }
+          ]
+        });
+        break;
+
+      case 'mock_interviews':
+        addMessage({
+          text: "🗣️ Practice makes perfect! Our mock interviews simulate real job interviews with technical and behavioral questions, followed by detailed feedback to improve your performance.",
+          isUser: false,
+          type: 'buttons',
+          buttons: [
+            { text: "👨‍💻 Talk to a Human", action: "talk_to_human" },
+            { text: "🔙 Back to Career Support", action: "career_support" }
+          ]
+        });
+        break;
+
+      case 'more_help':
+        addMessage({
+          text: "We also offer job placement assistance, LinkedIn profile optimization, salary negotiation tips, and industry networking opportunities. Let's discuss your specific needs!",
+          isUser: false,
+          type: 'buttons',
+          buttons: [
+            { text: "👨‍💻 Talk to a Human", action: "talk_to_human" },
+            { text: "🔙 Back to Career Support", action: "career_support" }
+          ]
+        });
+        break;
+
+      case 'talk_to_human':
+        setShowLeadForm(true);
+        addMessage({
+          text: "Perfect! 👨‍💻 I'd love to connect you with one of our experts. Please share your details below and we'll get back to you within 24 hours:",
+          isUser: false,
+          type: 'form'
+        });
+        break;
+
+      default:
+        // Handle free text input or unknown actions
+        addMessage({
+          text: "Thanks for your message! 😊 I'd be happy to help you with information about our courses or career support. You can also speak directly with our team:",
+          isUser: false,
+          type: 'buttons',
+          buttons: [
+            { text: "🎓 Explore Courses", action: "explore_courses" },
+            { text: "💼 Career Support", action: "career_support" },
+            { text: "👨‍💻 Talk to a Human", action: "talk_to_human" }
+          ]
+        });
+    }
+  };
+
+  const handleSendMessage = () => {
     if (!inputValue.trim()) return;
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
+    // Add user message
+    addMessage({
       text: inputValue,
       isUser: true,
-      timestamp: new Date()
-    };
+      type: 'text'
+    });
 
-    setMessages(prev => [...prev, userMessage]);
-    const query = inputValue;
+    const userMessage = inputValue.toLowerCase();
     setInputValue('');
-    setIsTyping(true);
 
-    setTimeout(() => {
-      let response = "I'm still learning. Can you ask that differently? You can try asking about our courses, enrollment, certificates, or career support! 🤖";
-      
-      const lowerInput = query.toLowerCase();
-      
-      if (lowerInput.includes('course') || lowerInput.includes('what do you offer')) {
-        response = "We offer 4 comprehensive courses: Python Programming, Data Science, Machine Learning, and Excel Mastery. Each course is designed to help you build practical skills for your career! 🚀";
-      } else if (lowerInput.includes('enroll') || lowerInput.includes('sign up') || lowerInput.includes('join')) {
-        response = "Great! I'd love to help you get started. Let me collect some details first.";
-        setTimeout(() => {
-          const leadFormMessage: Message = {
-            id: (Date.now() + 3).toString(),
-            text: "Please share your details so we can guide you better:",
-            isUser: false,
-            timestamp: new Date(),
-            type: 'form'
-          };
-          setMessages(prev => [...prev, leadFormMessage]);
-        }, 1000);
-      } else if (lowerInput.includes('certificate') || lowerInput.includes('certification')) {
-        response = "Yes! You'll receive a certificate of completion for each course you finish. Our certificates are recognized by industry professionals and can boost your career prospects. 🏆";
-      } else if (lowerInput.includes('career') || lowerInput.includes('job')) {
-        response = "Absolutely! We provide comprehensive career support including resume tips, interview preparation, and job search guidance. Our courses are designed with real-world applications to make you job-ready. 💼";
-      } else if (lowerInput.includes('price') || lowerInput.includes('cost') || lowerInput.includes('plan')) {
-        response = "We offer flexible pricing plans starting from $29/month. Check out our Plans page for detailed pricing and features. All plans include unlimited access to our course library! 💰";
+    // Simple keyword-based responses for free text
+    simulateTyping(() => {
+      if (userMessage.includes('course') || userMessage.includes('learn')) {
+        getBotResponse('explore_courses');
+      } else if (userMessage.includes('career') || userMessage.includes('job') || userMessage.includes('interview')) {
+        getBotResponse('career_support');
+      } else if (userMessage.includes('human') || userMessage.includes('talk') || userMessage.includes('speak')) {
+        getBotResponse('talk_to_human');
+      } else if (userMessage.includes('python')) {
+        getBotResponse('python_course');
+      } else if (userMessage.includes('data science') || userMessage.includes('data')) {
+        getBotResponse('data_science');
+      } else if (userMessage.includes('excel')) {
+        getBotResponse('excel_course');
+      } else if (userMessage.includes('machine learning') || userMessage.includes('ml') || userMessage.includes('ai')) {
+        getBotResponse('machine_learning');
+      } else {
+        getBotResponse('default');
       }
-
-      const botMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: response,
-        isUser: false,
-        timestamp: new Date()
-      };
-
-      setMessages(prev => [...prev, botMessage]);
-      setIsTyping(false);
-    }, 1000 + Math.random() * 1000);
+    });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -247,188 +312,166 @@ const Chatbot = () => {
     }
   };
 
-  const toggleChat = () => {
-    setIsOpen(!isOpen);
+  const handleLeadSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
+    const leadData: LeadData = {
+      name: formData.get('name') as string,
+      email: formData.get('email') as string,
+    };
+
+    console.log('Lead submitted:', leadData);
+    
+    setShowLeadForm(false);
+    
+    addMessage({
+      text: `Thank you, ${leadData.name}! 🎉 We've received your details and our team will contact you at ${leadData.email} within 24 hours. In the meantime, feel free to explore our website!`,
+      isUser: false,
+      type: 'contact'
+    });
+
+    toast({
+      title: "Thank you!",
+      description: "We'll be in touch soon!",
+    });
   };
 
   const LeadForm = () => (
-    <div className="bg-muted/50 p-3 rounded-lg space-y-3">
-      <form onSubmit={handleLeadSubmit} className="space-y-3">
-        <div>
-          <Label htmlFor="name" className="text-xs">Name *</Label>
-          <Input
-            id="name"
-            value={leadData.name}
-            onChange={(e) => setLeadData(prev => ({ ...prev, name: e.target.value }))}
-            placeholder="Your full name"
-            className="mt-1 h-8 text-xs"
-            required
-          />
-        </div>
-        <div>
-          <Label htmlFor="email" className="text-xs">Email *</Label>
-          <Input
-            id="email"
-            type="email"
-            value={leadData.email}
-            onChange={(e) => setLeadData(prev => ({ ...prev, email: e.target.value }))}
-            placeholder="your@email.com"
-            className="mt-1 h-8 text-xs"
-            required
-          />
-        </div>
-        <div>
-          <Label htmlFor="phone" className="text-xs">Phone</Label>
-          <Input
-            id="phone"
-            value={leadData.phone}
-            onChange={(e) => setLeadData(prev => ({ ...prev, phone: e.target.value }))}
-            placeholder="Your phone number"
-            className="mt-1 h-8 text-xs"
-          />
-        </div>
-        <div>
-          <Label htmlFor="interest" className="text-xs">Area of Interest *</Label>
-          <Select value={leadData.interest} onValueChange={(value) => setLeadData(prev => ({ ...prev, interest: value }))}>
-            <SelectTrigger className="mt-1 h-8 text-xs">
-              <SelectValue placeholder="Select your interest" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="data-science">Data Science</SelectItem>
-              <SelectItem value="python">Python Programming</SelectItem>
-              <SelectItem value="excel">Excel Mastery</SelectItem>
-              <SelectItem value="machine-learning">Machine Learning</SelectItem>
-              <SelectItem value="career-guidance">Career Guidance</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <Button type="submit" size="sm" className="w-full h-8 text-xs">
-          Submit
-        </Button>
-      </form>
-    </div>
+    <Card className="w-full max-w-sm mx-auto mt-4">
+      <CardContent className="p-4">
+        <form onSubmit={handleLeadSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="name" className="text-sm font-medium">Full Name *</Label>
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              placeholder="Enter your full name"
+              required
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label htmlFor="email" className="text-sm font-medium">Email Address *</Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Enter your email"
+              required
+              className="mt-1"
+            />
+          </div>
+          <Button type="submit" className="w-full">
+            Connect with Our Team
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 
   const ContactOptions = () => (
-    <div className="bg-muted/50 p-3 rounded-lg space-y-2">
-      <p className="text-xs font-medium">Need to talk to a human? 👇</p>
-      <div className="space-y-2">
+    <div className="space-y-2 mt-4">
+      <p className="text-sm text-muted-foreground mb-3">Or reach out directly:</p>
+      <div className="flex flex-col gap-2">
         <Button
           variant="outline"
           size="sm"
-          className="w-full justify-start h-8 text-xs"
-          onClick={() => window.open('https://wa.me/1234567890?text=Hi! I\'m interested in Gradway courses', '_blank')}
+          onClick={() => window.open('https://wa.me/919876543210', '_blank')}
+          className="w-full justify-start"
         >
-          <MessageSquare className="w-3 h-3 mr-2" />
-          WhatsApp Chat
+          <Phone className="w-4 h-4 mr-2" />
+          WhatsApp: +91 98765 43210
         </Button>
         <Button
           variant="outline"
           size="sm"
-          className="w-full justify-start h-8 text-xs"
-          onClick={() => window.open('https://calendly.com/gradway-team/consultation', '_blank')}
+          onClick={() => window.open('https://calendly.com/yourcompany', '_blank')}
+          className="w-full justify-start"
         >
-          <Calendar className="w-3 h-3 mr-2" />
+          <Calendar className="w-4 h-4 mr-2" />
           Book a Call
         </Button>
         <Button
           variant="outline"
           size="sm"
-          className="w-full justify-start h-8 text-xs"
-          onClick={() => window.location.href = 'mailto:hello@gradway.com?subject=Inquiry from Website'}
+          onClick={() => window.open('mailto:info@yourcompany.com', '_blank')}
+          className="w-full justify-start"
         >
-          <Phone className="w-3 h-3 mr-2" />
-          Send Email
+          <Mail className="w-4 h-4 mr-2" />
+          info@yourcompany.com
         </Button>
       </div>
     </div>
   );
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <>
       {/* Chat Window */}
       {isOpen && (
-        <div className="mb-4 w-80 h-96 bg-background border border-border rounded-lg shadow-lg animate-scale-in">
+        <div className="fixed bottom-20 right-4 w-80 h-96 bg-background border border-border rounded-lg shadow-lg flex flex-col z-50">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-border">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-foreground text-background rounded-full flex items-center justify-center text-sm font-medium">
-                GB
-              </div>
-              <div>
-                <h3 className="font-medium text-sm">GradBot</h3>
-                <p className="text-xs text-muted-foreground">Always here to help</p>
-              </div>
+            <div className="flex items-center gap-2">
+              <MessageCircle className="w-5 h-5 text-primary" />
+              <span className="font-medium">Chat Support</span>
             </div>
             <Button
               variant="ghost"
-              size="sm"
-              onClick={toggleChat}
-              className="h-8 w-8 p-0"
+              size="icon"
+              onClick={() => setIsOpen(false)}
+              className="h-6 w-6"
             >
-              <X className="h-4 w-4" />
+              <X className="w-4 h-4" />
             </Button>
           </div>
 
           {/* Messages */}
-          <div className="flex-1 p-4 h-64 overflow-y-auto space-y-3">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((message) => (
-              <div key={message.id}>
+              <div
+                key={message.id}
+                className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+              >
                 <div
-                  className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+                  className={`max-w-[80%] p-3 rounded-lg ${
+                    message.isUser
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground'
+                  }`}
                 >
-                  <div
-                    className={`max-w-xs px-3 py-2 rounded-lg text-sm ${
-                      message.isUser
-                        ? 'bg-foreground text-background'
-                        : 'bg-muted text-foreground'
-                    }`}
-                  >
-                    {message.text}
-                  </div>
+                  {message.text && <p className="text-sm whitespace-pre-line">{message.text}</p>}
+                  
+                  {message.type === 'buttons' && message.buttons && (
+                    <div className="flex flex-col gap-2 mt-3">
+                      {message.buttons.map((button, index) => (
+                        <Button
+                          key={index}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleButtonClick(button.action)}
+                          className="justify-start text-left h-auto py-2 px-3 whitespace-normal"
+                        >
+                          {button.text}
+                        </Button>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {message.type === 'form' && showLeadForm && <LeadForm />}
+                  {message.type === 'contact' && <ContactOptions />}
                 </div>
-                
-                {/* Render buttons for bot messages */}
-                {!message.isUser && message.type === 'buttons' && message.buttons && (
-                  <div className="flex flex-wrap gap-2 mt-2 ml-2">
-                    {message.buttons.map((button, index) => (
-                      <Button
-                        key={index}
-                        variant="outline"
-                        size="sm"
-                        className="h-7 text-xs"
-                        onClick={() => handleButtonClick(button.action)}
-                      >
-                        {button.text}
-                      </Button>
-                    ))}
-                  </div>
-                )}
-
-                {/* Render lead form */}
-                {!message.isUser && message.type === 'form' && (
-                  <div className="mt-2 ml-2">
-                    <LeadForm />
-                  </div>
-                )}
-
-                {/* Render contact options */}
-                {!message.isUser && message.type === 'contact' && (
-                  <div className="mt-2 ml-2">
-                    <ContactOptions />
-                  </div>
-                )}
               </div>
             ))}
-            
-            {/* Typing Animation */}
+
+            {/* Typing Indicator */}
             {isTyping && (
               <div className="flex justify-start">
-                <div className="max-w-xs px-3 py-2 rounded-lg text-sm bg-muted text-foreground">
+                <div className="bg-muted text-muted-foreground p-3 rounded-lg">
                   <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                    <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    <div className="w-2 h-2 bg-current rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                   </div>
                 </div>
               </div>
@@ -438,22 +481,16 @@ const Chatbot = () => {
 
           {/* Input */}
           <div className="p-4 border-t border-border">
-            <div className="flex space-x-2">
+            <div className="flex gap-2">
               <Input
-                type="text"
-                placeholder="Ask me anything..."
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
+                placeholder="Type your message..."
                 className="flex-1"
               />
-              <Button
-                onClick={handleSendMessage}
-                size="sm"
-                className="h-10 w-10 p-0"
-                disabled={!inputValue.trim() || isTyping}
-              >
-                <Send className="h-4 w-4" />
+              <Button onClick={handleSendMessage} size="icon">
+                <Send className="w-4 h-4" />
               </Button>
             </div>
           </div>
@@ -462,17 +499,13 @@ const Chatbot = () => {
 
       {/* Chat Toggle Button */}
       <Button
-        onClick={toggleChat}
-        size="lg"
-        className="h-14 w-14 rounded-full shadow-lg hover:scale-105 transition-transform duration-200"
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed bottom-4 right-4 w-14 h-14 rounded-full shadow-lg z-40"
+        size="icon"
       >
-        {isOpen ? (
-          <X className="h-6 w-6" />
-        ) : (
-          <MessageCircle className="h-6 w-6" />
-        )}
+        {isOpen ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
       </Button>
-    </div>
+    </>
   );
 };
 
